@@ -29,4 +29,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter
     {
         return NoOpPasswordEncoder.getInstance();
     }
+
+    @Override
+    public void configure(HttpSecurity http) throws Exception
+    {
+        http.authorizeRequests()
+            .antMatchers("/admin").hasRole("ADMIN") // Add matchers from high restrictive role to least, if we put least at top then it matches all eg., if this "/**" at top it
+            // matches all
+            .antMatchers("/user").hasAnyRole("USER", "ADMIN")   //spring security doesn't know ADMIN has higher authority, it's just a string, so we have to use hasAnyRole
+            .antMatchers("/").permitAll()
+            .and().formLogin();
+    }
 }
